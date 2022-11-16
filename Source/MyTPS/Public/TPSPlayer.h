@@ -33,4 +33,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* cameraComp;
 
+
+	void OnAxisHorizontal(float value);
+	void OnAxisVertical(float value);
+	void OnAxisMouseX(float value);
+	void OnAxisMouseY(float value);
+	void OnActionJump();
+
+	FVector direction;
 };

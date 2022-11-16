@@ -4,6 +4,7 @@
 #include "TPSPlayer.h"
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
+#include "..\Public\TPSPlayer.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -43,7 +44,10 @@ void ATPSPlayer::BeginPlay()
 void ATPSPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
+	direction = FTransform(GetControlRotation()).TransformVector(direction);
+	AddMovementInput(direction);
+	direction = FVector::ZeroVector;
 }
 
 // Called to bind functionality to input
@@ -51,5 +55,36 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// 이동, 회전, 점프에 대한 함수를 Bind 하고싶다.
+	PlayerInputComponent->BindAxis(TEXT("Move Forward / Backward"), this, &ATPSPlayer::OnAxisVertical);
+	PlayerInputComponent->BindAxis(TEXT("Move Right / Left"), this, &ATPSPlayer::OnAxisHorizontal);
+	PlayerInputComponent->BindAxis(TEXT("Turn Right / Left Mouse"), this, &ATPSPlayer::OnAxisMouseX);
+	PlayerInputComponent->BindAxis(TEXT("Look Up / Down Mouse"), this, &ATPSPlayer::OnAxisMouseY);
+	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ATPSPlayer::OnActionJump);
+}
+
+void ATPSPlayer::OnAxisHorizontal(float value)
+{
+	direction.Y = value;	// 좌우
+}
+
+void ATPSPlayer::OnAxisVertical(float value)
+{
+	direction.X = value;	// 앞뒤
+}
+
+void ATPSPlayer::OnAxisMouseX(float value)
+{
+	AddControllerYawInput(value);
+}
+
+void ATPSPlayer::OnAxisMouseY(float value)
+{
+	AddControllerPitchInput(value);
+}
+
+void ATPSPlayer::OnActionJump()
+{
+	ACharacter::Jump();
 }
 
