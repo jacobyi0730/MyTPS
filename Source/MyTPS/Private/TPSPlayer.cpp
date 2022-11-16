@@ -4,7 +4,7 @@
 #include "TPSPlayer.h"
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
-#include "..\Public\TPSPlayer.h"
+#include <GameFramework/CharacterMovementComponent.h>
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -31,6 +31,11 @@ ATPSPlayer::ATPSPlayer()
 	// 스프링암의 위치와 targetArmLength를 설정하고싶다.
 	springArmComp->SetRelativeLocation(FVector(0, 40, 70));
 	springArmComp->TargetArmLength = 100;
+
+
+	this->bUseControllerRotationYaw = true;
+	springArmComp->bUsePawnControlRotation = true;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 // Called when the game starts or when spawned
