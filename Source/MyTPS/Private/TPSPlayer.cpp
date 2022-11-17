@@ -9,7 +9,7 @@
 // Sets default values
 ATPSPlayer::ATPSPlayer()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// USkeletalMesh(Asset)를 가져와서 내 Mesh에 적용하고싶다.
@@ -36,20 +36,33 @@ ATPSPlayer::ATPSPlayer()
 	this->bUseControllerRotationYaw = true;
 	springArmComp->bUsePawnControlRotation = true;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("gunMeshComp"));
+	// 생성된 총을 몸Mesh에 붙이고싶다.
+	gunMeshComp->SetupAttachment(GetMesh());
+
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempGunMesh(TEXT("SkeletalMesh'/Game/Res/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
+
+	if (tempGunMesh.Succeeded())
+	{
+		gunMeshComp->SetSkeletalMesh(tempGunMesh.Object);
+		// gunMeshComp위치를 설정하고싶다.
+		gunMeshComp->SetRelativeLocation(FVector(-14, 52, 120));
+	}
 }
 
 // Called when the game starts or when spawned
 void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
 void ATPSPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	direction = FTransform(GetControlRotation()).TransformVector(direction);
 	AddMovementInput(direction);
 	direction = FVector::ZeroVector;

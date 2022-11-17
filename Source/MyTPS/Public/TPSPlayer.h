@@ -41,4 +41,8 @@ public:
 	void OnActionJump();
 
 	FVector direction;
+
+	// 총 Mesh를 몸에 붙이고싶다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USkeletalMeshComponent* gunMeshComp;
 };
