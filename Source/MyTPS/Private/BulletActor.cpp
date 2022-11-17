@@ -40,6 +40,7 @@ ABulletActor::ABulletActor()
 	movementComp->bShouldBounce = true;
 	movementComp->Bounciness = 0.3f;
 
+
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +48,8 @@ void ABulletActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	SetLifeSpan(2);
+	// 델리게이트로 타이머 처리
 }
 
 // Called every frame

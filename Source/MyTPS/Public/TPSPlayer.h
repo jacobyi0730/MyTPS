@@ -39,6 +39,16 @@ public:
 	void OnAxisMouseX(float value);
 	void OnAxisMouseY(float value);
 	void OnActionJump();
+	void OnActionFirePressed();
+	void OnActionFireReleased();
+	void OnMyMakeBullet();
+	FTimerHandle autoFireTimerHandle;
+
+	// Fire버튼을 누르면 총알공장에서 총알을 만들고
+	// gunMeshComp의 FirePosition에 배치하고싶다.
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABulletActor> bulletFactory;
+
 
 	FVector direction;
 

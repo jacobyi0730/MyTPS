@@ -5,6 +5,7 @@
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
 #include <GameFramework/CharacterMovementComponent.h>
+#include "BulletActor.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -78,7 +79,12 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAxis(TEXT("Move Right / Left"), this, &ATPSPlayer::OnAxisHorizontal);
 	PlayerInputComponent->BindAxis(TEXT("Turn Right / Left Mouse"), this, &ATPSPlayer::OnAxisMouseX);
 	PlayerInputComponent->BindAxis(TEXT("Look Up / Down Mouse"), this, &ATPSPlayer::OnAxisMouseY);
+	
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ATPSPlayer::OnActionJump);
+
+	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Pressed, this, &ATPSPlayer::OnActionFirePressed);
+
+	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Released, this, &ATPSPlayer::OnActionFireReleased);
 }
 
 void ATPSPlayer::OnAxisHorizontal(float value)
@@ -104,5 +110,25 @@ void ATPSPlayer::OnAxisMouseY(float value)
 void ATPSPlayer::OnActionJump()
 {
 	ACharacter::Jump();
+}
+
+void ATPSPlayer::OnActionFirePressed()
+{
+	GetWorldTimerManager().SetTimer(autoFireTimerHandle, this, &ATPSPlayer::OnMyMakeBullet, 0.5f, true, 0.5f);
+
+	OnMyMakeBullet();
+}
+
+void ATPSPlayer::OnActionFireReleased()
+{
+	GetWorldTimerManager().ClearTimer(autoFireTimerHandle);
+}
+
+void ATPSPlayer::OnMyMakeBullet()
+{
+	// FirePosition을 구하고
+	FTransform t = gunMeshComp->GetSocketTransform(TEXT("FirePosition"));
+	// 총알공장으로 총알을 Spawn하고싶다.
+	GetWorld()->SpawnActor<ABulletActor>(bulletFactory, t);
 }
 
