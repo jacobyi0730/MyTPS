@@ -48,14 +48,44 @@ void ABulletActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SetLifeSpan(2);
-	// 델리게이트로 타이머 처리
+	// 타이머를 이용해서 2초후에 Die함수를 호출하고싶다.
+	FTimerHandle handle;
+	GetWorldTimerManager().SetTimer(handle, 
+		FTimerDelegate::CreateLambda(
+			[this]()->void
+			{
+				this->Destroy();
+			}
+		), 2, false);
+
+
+
+	// 델리게이트 : 대리자
+	// 변수인데 함수의 주소를 담을 수 있다.
+	// 무명함수 + Lambda식
+	// 반환자료형 (매개변수);
+	// 람다
+	// 캡처
+	
+	auto lambdaFunction = [this]
+	()->int
+	{
+		return 10;
+	};
+
+	int a = lambdaFunction();
 }
 
 // Called every frame
+void ABulletActor::Die()
+{
+	this->Destroy();
+}
+
 void ABulletActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
+
 
