@@ -6,6 +6,9 @@
 #include <Camera/CameraComponent.h>
 #include <GameFramework/CharacterMovementComponent.h>
 #include "BulletActor.h"
+#include <Blueprint/UserWidget.h>
+#include <Kismet/GameplayStatics.h>
+#include <Particles/ParticleSystem.h>
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -50,6 +53,17 @@ ATPSPlayer::ATPSPlayer()
 		// gunMeshComp위치를 설정하고싶다.
 		gunMeshComp->SetRelativeLocation(FVector(-14, 52, 120));
 	}
+
+	// sniperMeshComp를 만들고 에셋도 적용하고싶다.
+	sniperMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("sniperMeshComp"));
+	sniperMeshComp->SetupAttachment(GetMesh());
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempSniper(TEXT("StaticMesh'/Game/Res/SniperGun/sniper1.sniper1'"));
+	if (tempSniper.Succeeded())
+	{
+		sniperMeshComp->SetStaticMesh(tempSniper.Object);
+		sniperMeshComp->SetRelativeLocation(FVector(-22, 55, 120));
+		sniperMeshComp->SetRelativeScale3D(FVector(0.15f));
+	}
 }
 
 // Called when the game starts or when spawned
@@ -57,6 +71,10 @@ void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+
+	sniperUI = CreateWidget(GetWorld(), sniperUIFactory);
+
+	OnActionChooseGun();
 }
 
 // Called every frame
@@ -85,6 +103,15 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Pressed, this, &ATPSPlayer::OnActionFirePressed);
 
 	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Released, this, &ATPSPlayer::OnActionFireReleased);
+
+	PlayerInputComponent->BindAction(TEXT("ChooseGun"), EInputEvent::IE_Pressed, this, &ATPSPlayer::OnActionChooseGun);
+
+	PlayerInputComponent->BindAction(TEXT("ChooseSniperGun"), EInputEvent::IE_Pressed, this, &ATPSPlayer::OnActionChooseSniperGun);
+
+
+	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Pressed, this, &ATPSPlayer::OnActionZoomIn);
+
+	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &ATPSPlayer::OnActionZoomOut);
 }
 
 void ATPSPlayer::OnAxisHorizontal(float value)
@@ -114,14 +141,21 @@ void ATPSPlayer::OnActionJump()
 
 void ATPSPlayer::OnActionFirePressed()
 {
-	GetWorldTimerManager().SetTimer(autoFireTimerHandle, this, &ATPSPlayer::OnMyMakeBullet, 0.5f, true, 0.5f);
+	if (true == bSniperGun) {
+		LineShot();
+	}
+	else { // 유탄총쏘기
+		GetWorldTimerManager().SetTimer(autoFireTimerHandle, this, &ATPSPlayer::OnMyMakeBullet, 0.5f, true, 0.5f);
 
-	OnMyMakeBullet();
+		OnMyMakeBullet();
+	}
 }
 
 void ATPSPlayer::OnActionFireReleased()
 {
-	GetWorldTimerManager().ClearTimer(autoFireTimerHandle);
+	if (false == bSniperGun) {
+		GetWorldTimerManager().ClearTimer(autoFireTimerHandle);
+	}
 }
 
 void ATPSPlayer::OnMyMakeBullet()
@@ -130,5 +164,62 @@ void ATPSPlayer::OnMyMakeBullet()
 	FTransform t = gunMeshComp->GetSocketTransform(TEXT("FirePosition"));
 	// 총알공장으로 총알을 Spawn하고싶다.
 	GetWorld()->SpawnActor<ABulletActor>(bulletFactory, t);
+}
+
+void ATPSPlayer::OnActionChooseGun() {
+	// 유탄총만 보이게 하고싶다.
+	bSniperGun = false;
+	gunMeshComp->SetVisibility(true);
+	sniperMeshComp->SetVisibility(false);
+}
+
+void ATPSPlayer::OnActionChooseSniperGun() {
+	// 스나이퍼 총만 보이게 하고싶다.
+	bSniperGun = true;
+	gunMeshComp->SetVisibility(false);
+	sniperMeshComp->SetVisibility(true);
+}
+
+void ATPSPlayer::OnActionZoomIn() {
+	// sniperUI를 보이게하고싶다.
+	if (false == sniperUI->IsInViewport()) {
+		sniperUI->AddToViewport();
+	}
+	// FOV 를 30으로 하고싶다.
+	cameraComp->SetFieldOfView(30);
+}
+void ATPSPlayer::OnActionZoomOut() {
+	// sniperUI를 보이지 않게 하고싶다.
+	if (true == sniperUI->IsInViewport()) {
+		sniperUI->RemoveFromParent();
+	}
+	// FOV 를 90으로 하고싶다.
+	cameraComp->SetFieldOfView(90);
+}
+
+void ATPSPlayer::LineShot()
+{
+	FVector start = cameraComp->GetComponentLocation();
+	FVector end = start + cameraComp->GetForwardVector() * 300000;
+	FHitResult hitInfo;
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+
+	if (GetWorld()->LineTraceSingleByChannel(hitInfo, start, end, ECollisionChannel::ECC_Visibility, params))
+	{
+		//UParticleSystem
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletImpactFactory, hitInfo.ImpactPoint);
+
+		// 만약 부딪힌 물체의 물리가 켜져있다면
+		auto hitComp = hitInfo.GetComponent();
+		if (hitComp && hitComp->IsSimulatingPhysics())
+		{
+			// 그 물체에게 힘을 가하고싶다.
+			FVector dir = (hitInfo.ImpactPoint - start);
+			dir.Normalize();
+			FVector force = dir * hitComp->GetMass() * 500000;
+			hitComp->AddForce(force);
+		}
+	}
 }
 

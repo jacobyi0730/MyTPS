@@ -30,7 +30,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class USpringArmComponent* springArmComp;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UCameraComponent* cameraComp;
 
 
@@ -55,4 +55,29 @@ public:
 	// 총 Mesh를 몸에 붙이고싶다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USkeletalMeshComponent* gunMeshComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* sniperMeshComp;
+
+	bool bSniperGun = false;
+	void OnActionChooseGun();
+	void OnActionChooseSniperGun();
+
+
+	// 시작할 때 sniperUI를 생성해야함.
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> sniperUIFactory;
+
+	class UUserWidget* sniperUI;
+	// Zoom 키처리 함수 제작
+	void OnActionZoomIn();
+	void OnActionZoomOut();
+
+
+	// 마우스 오른쪽 버튼 누르면 총 별로 따로 처리하고싶다.
+	// 라인쏘기를 하면 부딪힌 곳에 총알 자국을 표시하고싶다.
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* bulletImpactFactory;
+
+	void LineShot();
 };
