@@ -69,6 +69,12 @@ public:
 	TSubclassOf<class UUserWidget> sniperUIFactory;
 
 	class UUserWidget* sniperUI;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> crosshairUIFactory;
+
+	class UUserWidget* crosshairUI;
+
 	// Zoom 키처리 함수 제작
 	void OnActionZoomIn();
 	void OnActionZoomOut();
@@ -80,4 +86,8 @@ public:
 	class UParticleSystem* bulletImpactFactory;
 
 	void LineShot();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void TakeDamage(AActor* other);
+
 };

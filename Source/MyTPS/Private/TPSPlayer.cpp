@@ -73,6 +73,7 @@ void ATPSPlayer::BeginPlay()
 
 
 	sniperUI = CreateWidget(GetWorld(), sniperUIFactory);
+	crosshairUI = CreateWidget(GetWorld(), crosshairUIFactory);
 
 	OnActionChooseGun();
 }
@@ -171,6 +172,16 @@ void ATPSPlayer::OnActionChooseGun() {
 	bSniperGun = false;
 	gunMeshComp->SetVisibility(true);
 	sniperMeshComp->SetVisibility(false);
+	// crosshairUI와 sniperUI를 보이지않게 하고싶다.
+	if (crosshairUI && crosshairUI->IsInViewport())
+	{
+		crosshairUI->RemoveFromParent();
+	}
+	if (sniperUI && sniperUI->IsInViewport())
+	{
+		sniperUI->RemoveFromParent();
+	}
+
 }
 
 void ATPSPlayer::OnActionChooseSniperGun() {
@@ -178,23 +189,56 @@ void ATPSPlayer::OnActionChooseSniperGun() {
 	bSniperGun = true;
 	gunMeshComp->SetVisibility(false);
 	sniperMeshComp->SetVisibility(true);
+	// crosshairUI는 보이고 sniperUI는 안보이게 하고싶다.
+	if (crosshairUI && false == crosshairUI->IsInViewport())
+	{
+		crosshairUI->AddToViewport();
+	}
+	if (sniperUI && sniperUI->IsInViewport())
+	{
+		sniperUI->RemoveFromViewport();
+	}
 }
 
 void ATPSPlayer::OnActionZoomIn() {
-	// sniperUI를 보이게하고싶다.
-	if (false == sniperUI->IsInViewport()) {
+	
+	// 만약 1번총 상태라면 함수를 바로 반환하고싶다.
+	if (false == bSniperGun)
+	{	
+		return;
+	}
+	// sniperUI를 보이게하고,crosshairUI는 안보이게 하고싶다.
+	if (sniperUI && false == sniperUI->IsInViewport()) 
+	{
 		sniperUI->AddToViewport();
+	}
+	if (crosshairUI && true == crosshairUI->IsInViewport())
+	{
+		crosshairUI->RemoveFromParent();
 	}
 	// FOV 를 30으로 하고싶다.
 	cameraComp->SetFieldOfView(30);
 }
 void ATPSPlayer::OnActionZoomOut() {
-	// sniperUI를 보이지 않게 하고싶다.
-	if (true == sniperUI->IsInViewport()) {
-		sniperUI->RemoveFromParent();
-	}
+	
 	// FOV 를 90으로 하고싶다.
 	cameraComp->SetFieldOfView(90);
+
+	// 만약 1번총 상태라면 함수를 바로 반환하고싶다.
+	if (false == bSniperGun)
+	{
+		return;
+	}
+	
+	// sniperUI를 보이지 않게 하고 crosshairUI는 보이게 하고싶다.
+	if (sniperUI && true == sniperUI->IsInViewport())
+	{
+		sniperUI->RemoveFromParent();
+	}
+	if (crosshairUI && false == crosshairUI->IsInViewport())
+	{
+		crosshairUI->AddToViewport();
+	}
 }
 
 void ATPSPlayer::LineShot()
@@ -220,6 +264,8 @@ void ATPSPlayer::LineShot()
 			FVector force = dir * hitComp->GetMass() * 500000;
 			hitComp->AddForce(force);
 		}
+
+		TakeDamage(hitInfo.GetActor());
 	}
 }
 
