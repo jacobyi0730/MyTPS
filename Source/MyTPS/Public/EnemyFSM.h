@@ -41,4 +41,14 @@ public:
 
 	UPROPERTY()
 	class AEnemy* me;
+
+	UPROPERTY()
+	class ATPSPlayer* target;
+
+private:
+	void TickIdle();
+	void TickMove();
+	void TickAttack();
+	void TickDamage();
+	void TickDie();
 };
