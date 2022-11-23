@@ -28,4 +28,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UEnemyFSM* enemyFSM;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int hp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int maxHP = 2;
+
+	void OnDamageProcess(int damageValue);
+
 };

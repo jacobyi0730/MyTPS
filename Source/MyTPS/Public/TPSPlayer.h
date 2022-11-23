@@ -87,7 +87,4 @@ public:
 
 	void LineShot();
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void TakeDamage(AActor* other);
-
 };

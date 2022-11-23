@@ -9,6 +9,7 @@
 #include <Blueprint/UserWidget.h>
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
+#include "Enemy.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -264,8 +265,23 @@ void ATPSPlayer::LineShot()
 			FVector force = dir * hitComp->GetMass() * 500000;
 			hitComp->AddForce(force);
 		}
+		// 만약 부딪힌 액터가 Enemy라면
+		//auto enemy = Cast<AEnemy>(hitInfo.GetActor());
+		//if (nullptr != enemy)
+		//{
+		//	enemy->OnDamageProcess(1);
+		//}
+		auto hitActor = hitInfo.GetActor();
+		if (hitActor)
+		{
+			if (hitActor->IsA(AEnemy::StaticClass()))
+			{
+				// Enemy의 OnDamageProcess 함수를 호출하고싶다.
+				auto enemy = Cast<AEnemy>(hitActor);
+				enemy->OnDamageProcess(1);
+			}
+		}
 
-		TakeDamage(hitInfo.GetActor());
 	}
 }
 

@@ -45,10 +45,19 @@ public:
 	UPROPERTY()
 	class ATPSPlayer* target;
 
-private:
+	UPROPERTY(EditAnywhere)
+	float attackDistance = 160.f;
+
+public:
 	void TickIdle();
 	void TickMove();
 	void TickAttack();
 	void TickDamage();
 	void TickDie();
+
+	float currentTime;
+
+	void SetStateDamage();
+	void SetStateDie();
+
 };
