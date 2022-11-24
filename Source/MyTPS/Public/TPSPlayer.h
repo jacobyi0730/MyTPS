@@ -68,11 +68,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> sniperUIFactory;
 
+	UPROPERTY()
 	class UUserWidget* sniperUI;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> crosshairUIFactory;
 
+	UPROPERTY()
 	class UUserWidget* crosshairUI;
 
 	// Zoom 키처리 함수 제작
