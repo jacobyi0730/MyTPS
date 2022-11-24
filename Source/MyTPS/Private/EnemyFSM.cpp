@@ -51,9 +51,9 @@ void UEnemyFSM::TickIdle()
 	// 플레이어를 찾아서 목적지로 기억하고싶다.
 	target = Cast<ATPSPlayer>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	// 만약 찾았다면 
-	if (target)
+	if (target)	// 조건(Condition)
 	{
-		// 이동상태로 전이하고싶다.
+		// 이동상태로 전이(Transition)하고싶다.
 		state = EEnemyState::Move;
 	}
 }
