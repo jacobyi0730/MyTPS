@@ -36,7 +36,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyState state;
 
 	UPROPERTY()
@@ -45,7 +45,7 @@ public:
 	UPROPERTY()
 	class ATPSPlayer* target;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float attackDistance = 160.f;
 
 public:

@@ -10,6 +10,17 @@ AEnemy::AEnemy()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// 외형을 로드해서 적용하고싶다.
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempBody(TEXT("SkeletalMesh'/Game/Res/Enemy/Model/vampire_a_lusth.vampire_a_lusth'"));
+	if (tempBody.Succeeded()) {
+		GetMesh()->SetSkeletalMesh(tempBody.Object);
+		// 위치 : 0, 0, -87
+		// 회전 : 0, -90, 0
+		// 크기 : 0.84f
+		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -87), FRotator(0, -90, 0));
+		GetMesh()->SetRelativeScale3D(FVector(0.84f));
+	}
+
 	// enemyFSM 컴포넌트를 생성하고싶다.
 	enemyFSM = CreateDefaultSubobject<UEnemyFSM>(TEXT("enemyFSM"));
 }

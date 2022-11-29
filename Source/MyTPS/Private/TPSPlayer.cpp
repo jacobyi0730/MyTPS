@@ -54,7 +54,8 @@ ATPSPlayer::ATPSPlayer()
 	{
 		gunMeshComp->SetSkeletalMesh(tempGunMesh.Object);
 		// gunMeshComp위치를 설정하고싶다.
-		gunMeshComp->SetRelativeLocation(FVector(-14, 52, 120));
+		gunMeshComp->SetRelativeLocationAndRotation(FVector(-8.1f, 6.8f, -2.5f), FRotator(6, 106, 3));
+	
 	}
 
 	// sniperMeshComp를 만들고 에셋도 적용하고싶다.
@@ -64,7 +65,7 @@ ATPSPlayer::ATPSPlayer()
 	if (tempSniper.Succeeded())
 	{
 		sniperMeshComp->SetStaticMesh(tempSniper.Object);
-		sniperMeshComp->SetRelativeLocation(FVector(-22, 55, 120));
+		sniperMeshComp->SetRelativeLocationAndRotation(FVector(-27.7f, 0.12f, -0.5f), FRotator(6, 106.5f, 3));
 		sniperMeshComp->SetRelativeScale3D(FVector(0.15f));
 	}
 
