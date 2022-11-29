@@ -89,4 +89,9 @@ public:
 
 	void LineShot();
 
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* attackAnimMontage;
+
+	void PlayAttackAnim();
+
 };

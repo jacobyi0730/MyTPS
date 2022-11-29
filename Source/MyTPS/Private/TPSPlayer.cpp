@@ -144,6 +144,8 @@ void ATPSPlayer::OnActionJump()
 void ATPSPlayer::OnActionFirePressed()
 {
 	if (true == bSniperGun) {
+		PlayAttackAnim();
+
 		LineShot();
 	}
 	else { // 유탄총쏘기
@@ -162,6 +164,8 @@ void ATPSPlayer::OnActionFireReleased()
 
 void ATPSPlayer::OnMyMakeBullet()
 {
+	PlayAttackAnim();
+
 	// FirePosition을 구하고
 	FTransform t = gunMeshComp->GetSocketTransform(TEXT("FirePosition"));
 	// 총알공장으로 총알을 Spawn하고싶다.
@@ -283,5 +287,11 @@ void ATPSPlayer::LineShot()
 		}
 
 	}
+}
+
+void ATPSPlayer::PlayAttackAnim()
+{
+	PlayAnimMontage(attackAnimMontage);
+	
 }
 
