@@ -94,4 +94,13 @@ public:
 
 	void PlayAttackAnim();
 
+	UPROPERTY(EditAnywhere)
+	class USoundBase* fireSound;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCameraShakeBase> cameraShakeFactory;
+	
+	UPROPERTY()
+	UCameraShakeBase* cameraShake;
+
 };

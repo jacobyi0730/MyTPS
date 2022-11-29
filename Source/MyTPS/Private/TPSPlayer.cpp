@@ -10,6 +10,8 @@
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
 #include "Enemy.h"
+#include <Camera/PlayerCameraManager.h>
+#include <GameFramework/PlayerController.h>
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -64,6 +66,13 @@ ATPSPlayer::ATPSPlayer()
 		sniperMeshComp->SetStaticMesh(tempSniper.Object);
 		sniperMeshComp->SetRelativeLocation(FVector(-22, 55, 120));
 		sniperMeshComp->SetRelativeScale3D(FVector(0.15f));
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundBase> tempFireSound(TEXT("SoundWave'/Game/Res/SniperGun/Rifle.Rifle'"));
+
+	if (tempFireSound.Succeeded())
+	{
+		fireSound = tempFireSound.Object;
 	}
 }
 
@@ -291,7 +300,13 @@ void ATPSPlayer::LineShot()
 
 void ATPSPlayer::PlayAttackAnim()
 {
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), fireSound, GetActorLocation());
+
 	PlayAnimMontage(attackAnimMontage);
-	
+
+	if (nullptr == cameraShake || cameraShake->IsFinished())
+	{
+		cameraShake = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(cameraShakeFactory);
+	}
 }
 
