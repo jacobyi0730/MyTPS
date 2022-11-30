@@ -75,19 +75,19 @@ void UEnemyFSM::TickMove()
 
 void UEnemyFSM::TickAttack()
 {
-	currentTime += GetWorld()->GetDeltaSeconds();	// 시간이 흐르다가
-	if (currentTime > 1)	// 1초가 지나면 
-	{
-		PRINT_LOG(TEXT("Attack!!!"));// 공격을 하고
-		// 플레이어와의 거리를 구하고
-		float distance = (target->GetActorLocation() - me->GetActorLocation()).Size();
-		// 거리가 공격유효거리보다 멀어졌다면
-		if (distance >= attackDistance) {
+	//currentTime += GetWorld()->GetDeltaSeconds();	// 시간이 흐르다가
+	//if (currentTime > 1)	// 1초가 지나면 
+	//{
+	//	PRINT_LOG(TEXT("Attack!!!"));// 공격을 하고
+	//	// 플레이어와의 거리를 구하고
+	//	float distance = (target->GetActorLocation() - me->GetActorLocation()).Size();
+	//	// 거리가 공격유효거리보다 멀어졌다면
+	//	if (distance >= attackDistance) {
 
-			state = EEnemyState::Move;// 이동상태로 전이하고싶다.
-		}
-		currentTime = 0;// 현재시간을 초기화 하고싶다.
-	}
+	//		state = EEnemyState::Move;// 이동상태로 전이하고싶다.
+	//	}
+	//	currentTime = 0;// 현재시간을 초기화 하고싶다.
+	//}
 
 }
 

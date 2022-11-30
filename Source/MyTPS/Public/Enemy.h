@@ -36,4 +36,10 @@ public:
 
 	void OnDamageProcess(int damageValue);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMyPlayAnimDamage();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMyPlayAnimDie();
+
 };

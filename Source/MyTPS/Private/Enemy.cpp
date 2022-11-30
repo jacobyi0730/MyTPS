@@ -55,11 +55,13 @@ void AEnemy::OnDamageProcess(int damageValue)
 	if (hp > 0) {
 		// FSM의 상태를 Damage로 하고싶다.
 		enemyFSM->SetStateDamage();
+		OnMyPlayAnimDamage();
 	}
 	// 그렇지 않다면(체력이 0이하라면)
 	else {
 		// FSM의 상태를 Die로 하고싶다.
 		enemyFSM->SetStateDie();
+		OnMyPlayAnimDie();
 	}
 }
 
