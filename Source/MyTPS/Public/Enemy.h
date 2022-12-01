@@ -29,6 +29,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UEnemyFSM* enemyFSM;
 
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int hp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -36,10 +38,10 @@ public:
 
 	void OnDamageProcess(int damageValue);
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnMyPlayAnimDamage();
+	//UFUNCTION(BlueprintImplementableEvent)
+	//void OnMyPlayAnimDamage();
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnMyPlayAnimDie();
+	//UFUNCTION(BlueprintImplementableEvent)
+	//void OnMyPlayAnimDie();
 
 };

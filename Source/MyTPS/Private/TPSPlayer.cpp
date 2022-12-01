@@ -86,7 +86,7 @@ void ATPSPlayer::BeginPlay()
 	sniperUI = CreateWidget(GetWorld(), sniperUIFactory);
 	crosshairUI = CreateWidget(GetWorld(), crosshairUIFactory);
 
-	OnActionChooseGun();
+	OnActionChooseSniperGun();
 }
 
 // Called every frame

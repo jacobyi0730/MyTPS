@@ -7,6 +7,7 @@
 #include "TPSPlayer.h"
 #include "MyTPS.h"
 #include <Components/CapsuleComponent.h>
+#include "EnemyAnim.h"
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -26,10 +27,10 @@ void UEnemyFSM::BeginPlay()
 	state = EEnemyState::Idle;
 
 	me = Cast<AEnemy>(GetOwner());
+
+	// 태어날 때 EnemyAnim를 가져와서 enemyAnim변수에 넣어놓고싶다.
+	enemyAnim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance());
 }
-
-
-
 
 // Called every frame
 void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -44,6 +45,9 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	case EEnemyState::Damage:	TickDamage();	break;
 	case EEnemyState::Die:		TickDie();		break;
 	}
+	// 살아가면서 나의 state를 EnemyAnim의 enemyState에 값을 넣어주고싶다.
+	
+	enemyAnim->enemyState = state;
 }
 
 void UEnemyFSM::TickIdle()
@@ -70,43 +74,50 @@ void UEnemyFSM::TickMove()
 	{
 		// 공격 상태로 전이하고싶다.
 		state = EEnemyState::Attack;
+		enemyAnim->bAttackPlay = false;
 	}
 }
 
 void UEnemyFSM::TickAttack()
 {
-	//currentTime += GetWorld()->GetDeltaSeconds();	// 시간이 흐르다가
-	//if (currentTime > 1)	// 1초가 지나면 
-	//{
-	//	PRINT_LOG(TEXT("Attack!!!"));// 공격을 하고
-	//	// 플레이어와의 거리를 구하고
-	//	float distance = (target->GetActorLocation() - me->GetActorLocation()).Size();
-	//	// 거리가 공격유효거리보다 멀어졌다면
-	//	if (distance >= attackDistance) {
-
-	//		state = EEnemyState::Move;// 이동상태로 전이하고싶다.
-	//	}
-	//	currentTime = 0;// 현재시간을 초기화 하고싶다.
-	//}
+	currentTime += GetWorld()->GetDeltaSeconds();	// 시간이 흐르다가
+	if (currentTime > attackWaitDelay)	// attackWaitDelay초가 지나면 
+	{
+		// 공격행위를 다시 할때 공격여부를 결정하는 시점.
+		// 플레이어와의 거리를 구하고
+		float distance = (target->GetActorLocation() - me->GetActorLocation()).Size();
+		// 거리가 공격유효거리보다 멀어졌다면
+		if (distance >= attackDistance) {
+			// 이동상태로 전이하고싶다.
+			state = EEnemyState::Move;
+			enemyAnim->bAttackPlay = false;
+		}
+		else
+		{
+			// 공격행위를 다시 하겠다.
+			enemyAnim->bAttackPlay = true;
+		}
+		currentTime = 0;// 현재시간을 초기화 하고싶다.
+	}
 
 }
 
 void UEnemyFSM::TickDamage()
 {
-	// 0.5초 시간이 흐른 후 Move상태로 전이하고싶다.
-	currentTime += GetWorld()->GetDeltaSeconds();
-	if (currentTime > 0.5f)
-	{
-		state = EEnemyState::Move;
-	}
 }
+
 void UEnemyFSM::TickDie()
 {
+	if (false == bDieEndGoDown)
+	{
+		return;
+	}
+
 	// 2초동안 아래로 이동 후 
 	currentTime += GetWorld()->GetDeltaSeconds();
 
 	// 아래로 이동처리
-	me->SetActorLocation(me->GetActorLocation() + FVector::DownVector * 200 * GetWorld()->GetDeltaSeconds());
+	me->SetActorLocation(me->GetActorLocation() + FVector::DownVector * 100 * GetWorld()->GetDeltaSeconds());
 
 	if (currentTime > 2) {
 		me->Destroy();
@@ -116,6 +127,12 @@ void UEnemyFSM::TickDie()
 void UEnemyFSM::SetStateDamage()
 {
 	state = EEnemyState::Damage;
+
+	// 몽타주 플레이 
+	// Section : Damage0, Damage1
+	int index = FMath::RandRange(0, 1);
+	FString sectionName = FString::Printf(TEXT("Damage%d"), index);
+	me->PlayAnimMontage(enemyMontage, 1, FName(*sectionName));
 }
 
 void UEnemyFSM::SetStateDie()
@@ -125,4 +142,19 @@ void UEnemyFSM::SetStateDie()
 	// 충돌체를 끄고싶다.
 	auto col = me->GetCapsuleComponent();
 	col->SetCollisionProfileName(TEXT("NoCollision"));
+
+	// 몽타주 플레이 
+	// Section : Die
+	me->PlayAnimMontage(enemyMontage, 1, TEXT("Die"));
+}
+
+void UEnemyFSM::OnMyAnimDamageEnd()
+{
+	state = EEnemyState::Move;
+}
+
+void UEnemyFSM::OnMyAnimDieEnd()
+{
+	bDieEndGoDown = true;
+	currentTime = 0;
 }

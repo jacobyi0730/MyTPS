@@ -60,4 +60,22 @@ public:
 	void SetStateDamage();
 	void SetStateDie();
 
+	// 태어날 때 EnemyAnim를 가져와서 enemyAnim변수에 넣어놓고싶다.
+	// 살아가면서 나의 state를 EnemyAnim의 enemyState에 값을 넣어주고싶다.
+	UPROPERTY()
+	class UEnemyAnim* enemyAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float attackWaitDelay = 3;
+
+	UFUNCTION(BlueprintCallable)
+	void OnMyAnimDamageEnd();
+	
+	UFUNCTION(BlueprintCallable)
+	void OnMyAnimDieEnd();
+
+	bool bDieEndGoDown = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAnimMontage* enemyMontage;
 };
