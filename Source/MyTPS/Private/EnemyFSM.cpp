@@ -8,6 +8,9 @@
 #include "MyTPS.h"
 #include <Components/CapsuleComponent.h>
 #include "EnemyAnim.h"
+#include <AIModule/Classes/AIController.h>
+#include <NavigationSystem.h>
+#include <AIModule/Classes/Navigation/PathFollowingComponent.h>
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -30,6 +33,10 @@ void UEnemyFSM::BeginPlay()
 
 	// 태어날 때 EnemyAnim를 가져와서 enemyAnim변수에 넣어놓고싶다.
 	enemyAnim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance());
+
+	ai = Cast<AAIController>(me->GetController());
+
+	UpdateRandomDestination(me->GetActorLocation(), 500, destination);
 }
 
 // Called every frame
@@ -46,8 +53,8 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	case EEnemyState::Die:		TickDie();		break;
 	}
 	// 살아가면서 나의 state를 EnemyAnim의 enemyState에 값을 넣어주고싶다.
-	
-	enemyAnim->enemyState = state;
+
+	//enemyAnim->enemyState = state;
 }
 
 void UEnemyFSM::TickIdle()
@@ -58,28 +65,54 @@ void UEnemyFSM::TickIdle()
 	if (target)	// 조건(Condition)
 	{
 		// 이동상태로 전이(Transition)하고싶다.
-		state = EEnemyState::Move;
+		SetState(EEnemyState::Move);
 	}
 }
 
 void UEnemyFSM::TickMove()
 {
-	// 타겟을 항해서 이동하고싶다.
-	// P = P0 + vt
 	FVector dir = target->GetActorLocation() - me->GetActorLocation();
-	me->AddMovementInput(dir.GetSafeNormal());
+	float distance = dir.Size();
+
+	// 목적지를 향해 이동하고싶다.
+	// 네비게이션 시스템
+	auto naviSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+
+	FPathFindingQuery query;
+	FAIMoveRequest request;
+	request.SetAcceptanceRadius(3);
+	request.SetGoalLocation(target->GetActorLocation());
+	ai->BuildPathfindingQuery(request, query);
+	FPathFindingResult result = naviSystem->FindPathSync(query);
+	// 검색 범위안에 플레이어가 있다. 플레이어의 위치로 이동하겠다.
+	if (result.Result == ENavigationQueryResult::Success)
+	{
+		ai->MoveToLocation(target->GetActorLocation());
+	}
+	// 검색 범위안에 플레이어가 없으니 랜덤한 위치로 이동하겠다.
+	else
+	{
+		auto r = ai->MoveToLocation(destination);
+		// 만약 목적지에 도착했다면?
+		if (r == EPathFollowingRequestResult::AlreadyAtGoal)
+		{
+			// 목적지를 랜덤으로 갱신하고싶다.
+			UpdateRandomDestination(me->GetActorLocation(), 500, destination);
+		}
+	}
+
 	// 만약 타겟과의 거리가 공격유효거리 보다 작다면
-	float distance = dir.Size(); // FVector::Distance(me->GetActorLocation(), target->GetActorLocation()); // me->GetDistanceTo(target); // dir.Length();
 	if (distance < attackDistance)
 	{
 		// 공격 상태로 전이하고싶다.
-		state = EEnemyState::Attack;
+		SetState(EEnemyState::Attack);
 		enemyAnim->bAttackPlay = false;
 	}
 }
 
 void UEnemyFSM::TickAttack()
 {
+
 	currentTime += GetWorld()->GetDeltaSeconds();	// 시간이 흐르다가
 	if (currentTime > attackWaitDelay)	// attackWaitDelay초가 지나면 
 	{
@@ -89,7 +122,7 @@ void UEnemyFSM::TickAttack()
 		// 거리가 공격유효거리보다 멀어졌다면
 		if (distance >= attackDistance) {
 			// 이동상태로 전이하고싶다.
-			state = EEnemyState::Move;
+			SetState(EEnemyState::Move);
 			enemyAnim->bAttackPlay = false;
 		}
 		else
@@ -126,18 +159,24 @@ void UEnemyFSM::TickDie()
 
 void UEnemyFSM::SetStateDamage()
 {
-	state = EEnemyState::Damage;
+	SetState(EEnemyState::Damage);
+
+	ai->StopMovement();
 
 	// 몽타주 플레이 
 	// Section : Damage0, Damage1
 	int index = FMath::RandRange(0, 1);
 	FString sectionName = FString::Printf(TEXT("Damage%d"), index);
 	me->PlayAnimMontage(enemyMontage, 1, FName(*sectionName));
+
 }
 
 void UEnemyFSM::SetStateDie()
 {
-	state = EEnemyState::Die;
+	SetState(EEnemyState::Die);
+
+	ai->StopMovement();
+
 	currentTime = 0;
 	// 충돌체를 끄고싶다.
 	auto col = me->GetCapsuleComponent();
@@ -150,11 +189,34 @@ void UEnemyFSM::SetStateDie()
 
 void UEnemyFSM::OnMyAnimDamageEnd()
 {
-	state = EEnemyState::Move;
+	SetState(EEnemyState::Move);
 }
 
 void UEnemyFSM::OnMyAnimDieEnd()
 {
 	bDieEndGoDown = true;
 	currentTime = 0;
+}
+
+/// <summary>
+/// 상태가 전이되는 순간에 호출해야한다.
+/// </summary>
+/// <param name="next">다음 상태</param>
+void UEnemyFSM::SetState(EEnemyState next)
+{
+	// 내 상태를 next로 하고싶다.
+	state = next;
+	// 애니메이션의 상태로 next로 하고싶다.
+	enemyAnim->enemyState = next;
+}
+
+bool UEnemyFSM::UpdateRandomDestination(const FVector& origin, float radius, FVector& dest)
+{
+	auto naviSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+	FNavLocation loc;
+	bool result = naviSystem->GetRandomReachablePointInRadius(origin, radius, loc);
+
+	dest = loc.Location;
+
+	return result;
 }

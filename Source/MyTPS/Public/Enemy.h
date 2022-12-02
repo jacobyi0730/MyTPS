@@ -44,4 +44,7 @@ public:
 	//UFUNCTION(BlueprintImplementableEvent)
 	//void OnMyPlayAnimDie();
 
+	/*UPROPERTY(EditAnywhere)
+	class UNavigationInvokerComponent* naviInvokerComp;*/
+
 };

@@ -3,6 +3,8 @@
 
 #include "Enemy.h"
 #include "EnemyFSM.h"
+#include <NavigationInvokerComponent.h>
+
 
 // Sets default values
 AEnemy::AEnemy()
@@ -32,6 +34,9 @@ AEnemy::AEnemy()
 		GetMesh()->SetAnimInstanceClass(tempAnimInst.Class);
 	}
 
+	/*naviInvokerComp = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("naviInvokerComp"));
+
+	naviInvokerComp->SetGenerationRadii(500, 800);*/
 }
 
 // Called when the game starts or when spawned

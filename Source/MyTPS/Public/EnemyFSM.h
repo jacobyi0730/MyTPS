@@ -78,4 +78,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAnimMontage* enemyMontage;
+
+	void SetState(EEnemyState next);
+
+	UPROPERTY(EditAnywhere)
+	class AAIController* ai;
+
+	FVector destination;
+
+	bool UpdateRandomDestination(const FVector& orgin, float radius, FVector& dest);
 };
