@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -26,7 +26,10 @@ public:
 
 	void SetupInput(class UInputComponent* PlayerInputComponent);
 
-	// ¿Ãµø ∞¸∑√
+	UPROPERTY()
+	class ATPSPlayer* me;
+
+	// Ïù¥Îèô Í¥ÄÎ†®
 	void OnAxisHorizontal(float value);
 	void OnAxisVertical(float value);
 	void OnAxisMouseX(float value);

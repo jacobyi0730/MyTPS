@@ -1,7 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "PlayerMoveComp.h"
+#include "TPSPlayer.h"
 
 // Sets default values for this component's properties
 UPlayerMoveComp::UPlayerMoveComp()
@@ -19,7 +20,7 @@ void UPlayerMoveComp::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	me = Cast<ATPSPlayer>(GetOwner());
 	
 }
 
@@ -29,12 +30,15 @@ void UPlayerMoveComp::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	direction = FTransform(me->GetControlRotation()).TransformVector(direction);
+	me->AddMovementInput(direction);
+	direction = FVector::ZeroVector;
+
 }
 
 void UPlayerMoveComp::SetupInput(class UInputComponent* PlayerInputComponent)
 {
-	// ÀÌµ¿, È¸Àü, Á¡ÇÁ¿¡ ´ëÇÑ ÇÔ¼ö¸¦ Bind ÇÏ°í½Í´Ù.
+	// ì´ë™, íšŒì „, ì í”„ì— ëŒ€í•œ í•¨ìˆ˜ë¥¼ Bind í•˜ê³ ì‹¶ë‹¤.
 	PlayerInputComponent->BindAxis(TEXT("Move Forward / Backward"), this, &UPlayerMoveComp::OnAxisVertical);
 	PlayerInputComponent->BindAxis(TEXT("Move Right / Left"), this, &UPlayerMoveComp::OnAxisHorizontal);
 	PlayerInputComponent->BindAxis(TEXT("Turn Right / Left Mouse"), this, &UPlayerMoveComp::OnAxisMouseX);
@@ -43,3 +47,27 @@ void UPlayerMoveComp::SetupInput(class UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &UPlayerMoveComp::OnActionJump);
 }
 
+void UPlayerMoveComp::OnAxisHorizontal(float value)
+{
+	direction.Y = value;	// ì¢Œìš°
+}
+
+void UPlayerMoveComp::OnAxisVertical(float value)
+{
+	direction.X = value;	// ì•žë’¤
+}
+
+void UPlayerMoveComp::OnAxisMouseX(float value)
+{
+	me->AddControllerYawInput(value);
+}
+
+void UPlayerMoveComp::OnAxisMouseY(float value)
+{
+	me->AddControllerPitchInput(value);
+}
+
+void UPlayerMoveComp::OnActionJump()
+{
+	me->Jump();
+}
