@@ -12,6 +12,7 @@
 #include "Enemy.h"
 #include <Camera/PlayerCameraManager.h>
 #include <GameFramework/PlayerController.h>
+#include "PlayerMoveComp.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -75,6 +76,8 @@ ATPSPlayer::ATPSPlayer()
 	{
 		fireSound = tempFireSound.Object;
 	}
+
+	moveComp = CreateDefaultSubobject<UPlayerMoveComp>(TEXT("moveComp"));
 }
 
 // Called when the game starts or when spawned
@@ -104,13 +107,7 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// 이동, 회전, 점프에 대한 함수를 Bind 하고싶다.
-	PlayerInputComponent->BindAxis(TEXT("Move Forward / Backward"), this, &ATPSPlayer::OnAxisVertical);
-	PlayerInputComponent->BindAxis(TEXT("Move Right / Left"), this, &ATPSPlayer::OnAxisHorizontal);
-	PlayerInputComponent->BindAxis(TEXT("Turn Right / Left Mouse"), this, &ATPSPlayer::OnAxisMouseX);
-	PlayerInputComponent->BindAxis(TEXT("Look Up / Down Mouse"), this, &ATPSPlayer::OnAxisMouseY);
 	
-	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ATPSPlayer::OnActionJump);
 
 	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Pressed, this, &ATPSPlayer::OnActionFirePressed);
 

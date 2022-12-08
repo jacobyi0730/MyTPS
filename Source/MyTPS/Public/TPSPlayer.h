@@ -26,6 +26,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// 기존 이동, 총쏘기 기능을 컴포넌트로 옮기고 싶다.
+	UPROPERTY(EditAnywhere)
+	class UPlayerMoveComp* moveComp;
+
 	// 스프링암, 카메라를 배치하고싶다.
 	UPROPERTY(EditAnywhere)
 	class USpringArmComponent* springArmComp;
@@ -33,12 +37,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UCameraComponent* cameraComp;
 
+	// 총 Mesh를 몸에 붙이고싶다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USkeletalMeshComponent* gunMeshComp;
 
-	void OnAxisHorizontal(float value);
-	void OnAxisVertical(float value);
-	void OnAxisMouseX(float value);
-	void OnAxisMouseY(float value);
-	void OnActionJump();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* sniperMeshComp;
+
+
+
+	//// 이동 관련
+	//void OnAxisHorizontal(float value);
+	//void OnAxisVertical(float value);
+	//void OnAxisMouseX(float value);
+	//void OnAxisMouseY(float value);
+	//void OnActionJump();
+	//FVector direction;
+
+
+	// 총쏘기 관련
 	void OnActionFirePressed();
 	void OnActionFireReleased();
 	void OnMyMakeBullet();
@@ -49,16 +66,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABulletActor> bulletFactory;
 
-
-	FVector direction;
-
-	// 총 Mesh를 몸에 붙이고싶다.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USkeletalMeshComponent* gunMeshComp;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UStaticMeshComponent* sniperMeshComp;
-
 	bool bSniperGun = false;
 	void OnActionChooseGun();
 	void OnActionChooseSniperGun();
@@ -66,21 +73,20 @@ public:
 
 	// 시작할 때 sniperUI를 생성해야함.
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UUserWidget> sniperUIFactory;
+		TSubclassOf<class UUserWidget> sniperUIFactory;
 
 	UPROPERTY()
-	class UUserWidget* sniperUI;
+		class UUserWidget* sniperUI;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UUserWidget> crosshairUIFactory;
+		TSubclassOf<class UUserWidget> crosshairUIFactory;
 
 	UPROPERTY()
-	class UUserWidget* crosshairUI;
+		class UUserWidget* crosshairUI;
 
 	// Zoom 키처리 함수 제작
 	void OnActionZoomIn();
 	void OnActionZoomOut();
-
 
 	// 마우스 오른쪽 버튼 누르면 총 별로 따로 처리하고싶다.
 	// 라인쏘기를 하면 부딪힌 곳에 총알 자국을 표시하고싶다.
@@ -102,5 +108,7 @@ public:
 	
 	UPROPERTY()
 	UCameraShakeBase* cameraShake;
+
+
 
 };
