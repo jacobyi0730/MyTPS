@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PlayerBaseComp.h"
 #include "PlayerFireComp.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MYTPS_API UPlayerFireComp : public UActorComponent
+class MYTPS_API UPlayerFireComp : public UPlayerBaseComp
 {
 	GENERATED_BODY()
 
@@ -24,13 +25,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void SetupInput(class UInputComponent* PlayerInputComponent);
-
-	UPROPERTY()
-	class ATPSPlayer* me;
-
-
-		
+	virtual void SetupInput(class UInputComponent* PlayerInputComponent) override;
+	
 		// 총쏘기 관련
 	void OnActionFirePressed();
 	void OnActionFireReleased();

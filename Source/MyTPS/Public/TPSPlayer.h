@@ -28,10 +28,10 @@ public:
 
 	// 기존 이동, 총쏘기 기능을 컴포넌트로 옮기고 싶다.
 	UPROPERTY(EditAnywhere)
-	class UPlayerMoveComp* moveComp;
+	class UPlayerBaseComp* moveComp;
 
 	UPROPERTY(EditAnywhere)
-	class UPlayerFireComp* fireComp;
+	class UPlayerBaseComp* fireComp;
 
 	// 스프링암, 카메라를 배치하고싶다.
 	UPROPERTY(EditAnywhere)

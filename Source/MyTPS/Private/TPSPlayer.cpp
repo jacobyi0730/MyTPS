@@ -105,7 +105,5 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 	moveComp->SetupInput(PlayerInputComponent);
 	fireComp->SetupInput(PlayerInputComponent);
-
-	
 }
 

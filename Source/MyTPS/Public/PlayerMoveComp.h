@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PlayerBaseComp.h"
 #include "PlayerMoveComp.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MYTPS_API UPlayerMoveComp : public UActorComponent
+class MYTPS_API UPlayerMoveComp : public UPlayerBaseComp
 {
 	GENERATED_BODY()
 
@@ -24,10 +25,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void SetupInput(class UInputComponent* PlayerInputComponent);
-
-	UPROPERTY()
-	class ATPSPlayer* me;
+	virtual void SetupInput(class UInputComponent* PlayerInputComponent) override;
 
 	// 이동 관련
 	void OnAxisHorizontal(float value);
