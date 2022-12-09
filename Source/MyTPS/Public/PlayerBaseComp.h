@@ -24,8 +24,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	virtual void InitializeComponent() override;
+
 	virtual void SetupInput(class UInputComponent* PlayerInputComponent);
 
 	UPROPERTY()
 	class ATPSPlayer* me;
+
 };

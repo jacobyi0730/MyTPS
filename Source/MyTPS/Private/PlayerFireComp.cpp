@@ -26,7 +26,7 @@ void UPlayerFireComp::BeginPlay()
 {
 	Super::BeginPlay();
 
-	me = Cast<ATPSPlayer>(GetOwner());
+	
 	
 	sniperUI = CreateWidget(GetWorld(), sniperUIFactory);
 	crosshairUI = CreateWidget(GetWorld(), crosshairUIFactory);

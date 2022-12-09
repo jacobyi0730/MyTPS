@@ -24,5 +24,5 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float attackDistance = 160;
-	
+
 };

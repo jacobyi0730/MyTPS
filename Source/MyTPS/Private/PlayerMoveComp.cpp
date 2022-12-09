@@ -20,7 +20,7 @@ void UPlayerMoveComp::BeginPlay()
 {
 	Super::BeginPlay();
 
-	me = Cast<ATPSPlayer>(GetOwner());
+
 	
 }
 

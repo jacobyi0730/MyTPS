@@ -2,6 +2,7 @@
 
 
 #include "PlayerBaseComp.h"
+#include "TPSPlayer.h"
 
 // Sets default values for this component's properties
 UPlayerBaseComp::UPlayerBaseComp()
@@ -9,6 +10,7 @@ UPlayerBaseComp::UPlayerBaseComp()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	bWantsInitializeComponent = true;
 
 	// ...
 }
@@ -19,8 +21,7 @@ void UPlayerBaseComp::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+
 }
 
 
@@ -30,6 +31,15 @@ void UPlayerBaseComp::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UPlayerBaseComp::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	me = Cast<ATPSPlayer>(GetOwner());
+
+	me->onInputBindingDelegate.AddUObject(this, &UPlayerBaseComp::SetupInput);
 }
 
 void UPlayerBaseComp::SetupInput(class UInputComponent* PlayerInputComponent)

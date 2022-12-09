@@ -88,6 +88,7 @@ void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	hp = maxHP;
 
 }
 
@@ -103,7 +104,16 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	moveComp->SetupInput(PlayerInputComponent);
-	fireComp->SetupInput(PlayerInputComponent);
+	onInputBindingDelegate.Broadcast(PlayerInputComponent);
+
+}
+
+void ATPSPlayer::OnMyHitFromEnemy(int damage)
+{
+	hp = FMath::Clamp(hp - damage, 0, maxHP);
+	if (hp <= 0)
+	{
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+	}
 }
 

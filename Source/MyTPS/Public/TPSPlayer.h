@@ -6,10 +6,13 @@
 #include "GameFramework/Character.h"
 #include "TPSPlayer.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FInputBindingDelegate, class UInputComponent*);
+
 UCLASS()
 class MYTPS_API ATPSPlayer : public ACharacter
 {
 	GENERATED_BODY()
+
 
 public:
 	// Sets default values for this character's properties
@@ -25,6 +28,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	FInputBindingDelegate onInputBindingDelegate;
 
 	// 기존 이동, 총쏘기 기능을 컴포넌트로 옮기고 싶다.
 	UPROPERTY(EditAnywhere)
@@ -51,7 +56,13 @@ public:
 	class USoundBase* fireSound;
 
 	
+	UPROPERTY(EditAnywhere)
+	int hp;
 
+	UPROPERTY(EditAnywhere)
+	int maxHP = 3;
 
+	// 적이 나(플레이어)를 공격(Hit)하면 체력을 감소시키고싶다.
+	void OnMyHitFromEnemy(int damage);
 
 };
