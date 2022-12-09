@@ -25,4 +25,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float attackDistance = 160;
 
+	UFUNCTION()
+	void AnimNotify_OnMyHit();
+
 };

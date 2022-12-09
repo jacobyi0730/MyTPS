@@ -56,10 +56,10 @@ public:
 	class USoundBase* fireSound;
 
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int hp;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int maxHP = 3;
 
 	// 적이 나(플레이어)를 공격(Hit)하면 체력을 감소시키고싶다.
