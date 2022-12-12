@@ -117,3 +117,8 @@ void ATPSPlayer::OnMyHitFromEnemy(int damage)
 	}
 }
 
+void ATPSPlayer::OnMyChooseSniperGun_Implementation(bool isSniperGun)
+{
+
+}
+

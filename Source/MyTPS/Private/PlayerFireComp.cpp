@@ -96,6 +96,7 @@ void UPlayerFireComp::OnMyMakeBullet()
 void UPlayerFireComp::OnActionChooseGun() {
 	// 유탄총만 보이게 하고싶다.
 	bSniperGun = false;
+	me->OnMyChooseSniperGun(false);
 	me->gunMeshComp->SetVisibility(true);
 	me->sniperMeshComp->SetVisibility(false);
 	// crosshairUI와 sniperUI를 보이지않게 하고싶다.
@@ -113,6 +114,7 @@ void UPlayerFireComp::OnActionChooseGun() {
 void UPlayerFireComp::OnActionChooseSniperGun() {
 	// 스나이퍼 총만 보이게 하고싶다.
 	bSniperGun = true;
+	me->OnMyChooseSniperGun(true);
 	me->gunMeshComp->SetVisibility(false);
 	me->sniperMeshComp->SetVisibility(true);
 	// crosshairUI는 보이고 sniperUI는 안보이게 하고싶다.
