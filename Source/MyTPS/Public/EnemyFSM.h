@@ -1,6 +1,11 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
+// 컴파일러 경고(수준 4) C4458 
+//  : 맴버변수의 이름과 로컬변수의 이름이 같으면 경고
+// https://learn.microsoft.com/ko-kr/cpp/error-messages/compiler-warnings/compiler-warning-level-4-c4458?view=msvc-170
+// 해당 경고를 무시하려면
+#pragma warning(disable: 4458) 
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -15,9 +20,6 @@ enum class EEnemyState : uint8
 	Damage UMETA(Displayname = DAMAGE),
 	Die UMETA(Displayname = DIE)
 };
-
-
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MYTPS_API UEnemyFSM : public UActorComponent
